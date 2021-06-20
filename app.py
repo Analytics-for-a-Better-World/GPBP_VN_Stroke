@@ -63,7 +63,7 @@ def dashboard():
 			        'type': 'Feature',
 			        'properties': {
 			        'description':
-			        '<strong>'+str(each_val[4])+'</strong><p><a href="'+str(each_val[13])+'" target="_blank">'+str(each_val[5])+'</a> is '+str(each_val[14])+' hours by driving in traffic'+'</p>',
+			        '<strong>'+str(each_val[4])+'</strong><p><a href="'+str(each_val[13])+'" target="_blank">'+str(each_val[5])+'</a> is '+str(each_val[14])+' hours by driving in traffic'+'</p><form method="POST" action="/isochrones"><input hidden id="my_input" type="text" name="HTMLControlName" value="'+each_val[4]+'"><input type="submit" value="View Isochrones"></form>',
 			        'icon': 'hospital-15'
 			        },
 			        'geometry': {
@@ -80,7 +80,7 @@ def dashboard():
 			        'type': 'Feature',
 			        'properties': {
 			        'description':
-			        '<strong>'+str(each_val[3])+'</strong><p><a href="'+str(each_val[12])+'" target="_blank">'+str(each_val[4])+'</a> is a '+str(each_val[2])+' stroke facility'+'</p>',
+			        '<strong>'+str(each_val[3])+'</strong><p><a href="'+str(each_val[12])+'" target="_blank">'+str(each_val[4])+'</a> is a '+str(each_val[2])+' stroke facility'+'</p><form method="POST" action="/isochrones"><input hidden id="my_input" type="text" name="HTMLControlName" value="'+each_val[4]+'"><input type="submit" value="Submit"></form>',
 			        'icon': 'hospital-15'
 			        },
 			        'geometry': {
@@ -92,6 +92,16 @@ def dashboard():
 
 	return render_template('dashboard.html',ACCESS_KEY='pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2sweWVkOHcxMDBodDNpbm1ueXY2bzl1OCJ9.c93KNq0W0VtUq4FCD3XxJg',
 		stroke_facs=fac_details)
+
+@app.route('/isochrones', methods=["POST"])
+def isochrones():
+	if(request.method=='POST'):
+		sel_name = request.form.get('HTMLControlName')
+		df_stroke_facs = pd.read_csv('static/data/stroke-facs.csv')
+		sel_fac = df_stroke_facs[df_stroke_facs['Name_English']==sel_name][['longitude','latitude']].values
+		longitude = sel_fac[0][0]
+		latitude = sel_fac[0][1]
+		return render_template('isochrones.html',longitude=longitude,latitude=latitude) 
 
 if __name__ == '__main__':
     app.run(debug=True)
