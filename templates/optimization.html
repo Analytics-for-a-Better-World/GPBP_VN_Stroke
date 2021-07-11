@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>GPBP Vietnam</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <script> 
+    $(function(){
+      var folder_name = "{{folder_name|safe}}";
+      $("#includeContent").load(folder_name); 
+    });
+  </script>
+
+</head>
+
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <div class="navbar-icon-container">
+          <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
+          <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
+        </div>
+        <a class="navbar-brand" href="#">GPBP Vietnam</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Dashboard</a></li> 
+          <li class="dropdown">
+            <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/optimization"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Analyze and Optimize</a></li>  
+              <li class="divider hidden-xs"></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" id="downloadDrop" href="#" role="button" data-toggle="dropdown"><i class="fa fa-cloud-download white"></i>&nbsp;&nbsp;Download Data<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="../static/data/stroke-facs.csv" download="stroke-facilities.csv" target="_blank" data-toggle="collapse" data-target=".navbar-collapse.in"><i class="fa fa-download"></i>&nbsp;&nbsp;Stroke Facility Locations</a></li>
+              <li class="divider hidden-xs"></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!--/.navbar-collapse -->
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-9">
+        <h2>Available Data Models</h2>
+        <p>The following data models are currently supported by the platform - </p>            
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Travel Distance</th>
+              <th>Beneficiary Layer</th>
+              <th>Facility</th>
+              <th>Potential Locations for Optimiser</th>
+              <th>Click on the button to use the data model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>OSM</td>
+              <td>WorldPop Unconstrained individual countries 2020 UN adjusted (Res 1 km)</td>
+              <td>Stroke Care Facilities (Team)</td>
+              <th>Health Facilities (OSM)</th>
+              <td>
+                <form action="/optimization" method="post">
+                  <div class="input submit">
+                    <input type="hidden" name="model_sel" value="Model_wp1_hh">
+                    <input type="submit" value="Select">
+                  </div>
+                </form>
+              </td>
+            </tr>
+            <tr>
+              <td>OSM</td>
+              <td>WorldPop Unconstrained individual countries 2020 UN adjusted (Res 1 km)</td>
+              <td>Stroke Care Facilities (Team)</td>
+              <th>Vietnam Grid of 10km * 10km</th>
+              <td>
+                <form id="target" action="/optimization" method="post">
+                  <div class="input submit">
+                    <input type="hidden" name="model_sel" value="Model_wp1_g10">
+                    <input type="submit" value="Select">
+                  </div>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <form>
+          <div class="input submit">
+            <input type="submit" value="Add a New Model - Coming Soon!">
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <br><br>
+
+    <div class="row" id="myDIV" name="myDIV" style="visibility: hidden">
+      <div class="col-md-12">
+        <p>The optimization model for Vietnam starts out with a framework linking beneficiary locations, stroke facility locations, and road network.  The optimization model then seeks to understand where new facilities could be best placed to improve access. Universal access is defined as all populations having access to at least one facility within a certain travel distance (e.g., 10, 20, 50 km).  </p>
+        <p>The objective of this model is to maximize the number of inhabitants that can reach a facility within the preset maximum desired travel distance. The  model was implemented through python scripts based on refined analytics taken from Antonissen (2020).  For this phase of work, the team opted for the Gurobi Optimiser, which is one of the most powerful optimization solvers available.</p>
+        <div id="includeContent"></div>
+      </div>
+    </div>
+
+    <div class="row" style="visibility: hidden" id="myDIV1" name="myDIV1">
+      <h4>Choose the number of hospitals and distance to visualize the location of hospitals<br/><br/></h4>
+      <form id="target_map" action="/optimization" method="post">
+        <input type="hidden" id ="model_sel_form_map" name="model_sel">
+        <div class="col-md-4">
+          <label for="inlineRadio1">Choose the distance: </label>
+          {% for item in km_options %}
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="radio_dist" id="radio_{{item}}" value="{{item}}"> {{item}}
+          </div>
+          {% endfor %}
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="sel1">Choose the number of hospitals: </label>
+            <select class="form-control" id="sel1" name="sel1">
+            {% for item in hosp_options %}
+              <option value="{{item}}">{{item}}</option>
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+           <input type="submit" value="Submit">
+        </div>
+      </form>
+    </div>
+
+    <div class="row" id="myDIV2" style="visibility: hidden">
+      <h4><br/><br/>The following map shows the health facilities for the options chosen above:</h4>
+      <div id="map_view" style="height:900px; width:1100px;"></div>
+    </div>
+
+    <div class="row" id="footer" style="visibility: hidden;">
+      <h3>References</h3>
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Welcome to the Geospatial Planning and Budgeting Platform!</h4>
+        </div>
+        <div class="modal-body">
+          <ul class="nav nav-tabs nav-justified" id="aboutTabs">
+            <li class="active"><a href="#about" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;About the project</a></li>
+            <li><a href="#contact" data-toggle="tab"><i class="fa fa-envelope"></i>&nbsp;Contact us</a></li>
+            <li><a href="#disclaimer" data-toggle="tab"><i class="fa fa-exclamation-circle"></i>&nbsp;Disclaimer</a></li>
+          </ul>
+          <div class="tab-content" id="aboutTabsContent">
+            <div class="tab-pane fade active in" id="about">
+              <p>This interactive site allow users to examine key spatial layers related to facility location, road network consolidations, population distribution, administrative boundaries, and risk layers (e.g., flooding), and satellite imagery.</p>
+              <div class="panel panel-primary">
+                <div class="panel-heading">Features</div>
+                <ul class="list-group">
+                  <li class="list-group-item">Fullscreen mobile-friendly map template with responsive navbar and modal placeholders</li>
+                </ul>
+              </div>
+            </div>
+            <div id="disclaimer" class="tab-pane fade text-danger">
+              <p>The data provided on this site is for informational and planning purposes only.</p>
+              <p>All information on this map is subject to such variations and corrections as might result from a complete title search and/or accurate field survey.</p>
+            </div>
+            <div class="tab-pane fade" id="contact">
+              <form id="contact-form">
+                <div class="well well-sm">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="first-name">First Name:</label>
+                        <input type="text" class="form-control" id="first-name">
+                      </div>
+                      <div class="form-group">
+                        <label for="last-name">Last Name:</label>
+                        <input type="text" class="form-control" id="last-email">
+                      </div>
+                      <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="text" class="form-control" id="email">
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                      <label for="message">Message:</label>
+                      <textarea class="form-control" rows="8" id="message"></textarea>
+                    </div>
+                    <div class="col-md-12">
+                      <p>
+                        <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Submit</button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var folder_name = '{{folder_name | safe}}';
+      if(folder_name!=9999){
+        document.getElementById('myDIV').style.visibility = 'visible';
+        document.getElementById('myDIV1').style.visibility = 'visible';
+        var el = document.getElementById('model_sel_form_map');
+        el.value = '{{model_selected|safe}}';
+      }
+
+      var selected_dist = '{{selected_dist | safe}}';
+      var selected_hosp_count = '{{selected_hosp_count | safe}}';
+
+      if(selected_dist!=9999){
+        document.getElementById('myDIV2').style.visibility = 'visible';
+        document.getElementById("radio_{{selected_dist}}").checked = true;
+        document.getElementById("sel1").value = selected_hosp_count;
+        var folder_name_map = "/static/data/map_render.html";
+        $("#map_view").load(folder_name_map); 
+      }
+
+    });
+  </script>
+
+</body>
+</html>
