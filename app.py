@@ -120,13 +120,16 @@ def analyze():
 		model_name = request.form['model_sel']
 		folder_name = '/static/data/optimization/'+model_name+'/pareto.html'
 		km_options = [10,20,50]
-		hosp_options = [0,10,20,50,100]
+		hosp_options = [0,10,20,50]
 
 		if "radio_dist" in request.form:
 			selected_dist = request.form['radio_dist']
 			selected_hosp_count = request.form['sel1']
 
 			model_name = request.form['model_sel']
+
+			'''
+			
 			folder_name_model = 'static/data/optimization/'+model_name+'/'
 
 			df_opt_outputs = pd.read_pickle(folder_name_model+'df_opt_outputs.pkl')
@@ -157,11 +160,11 @@ def analyze():
 			served_population['household_count'] = served_population['household_count'].round()
 			served = served_population.groupby(['x_roun','y_roun','served'])['household_count'].sum().reset_index()
 
-			#unserved_population = served1_population[served1_population['served']==0]
-			#unserved_population['x_roun'] =  unserved_population['xcoord'].round(1)
-			#unserved_population['y_roun'] =  unserved_population['ycoord'].round(1)
-			#unserved_population['household_count'] = unserved_population['household_count'].round()
-			#unserved = unserved_population.groupby(['x_roun','y_roun','served'])['household_count'].sum().reset_index()
+			unserved_population = served1_population[served1_population['served']==0]
+			unserved_population['x_roun'] =  unserved_population['xcoord'].round(3)
+			unserved_population['y_roun'] =  unserved_population['ycoord'].round(3)
+			unserved_population['household_count'] = unserved_population['household_count'].round()
+			unserved = unserved_population.groupby(['x_roun','y_roun','served'])['household_count'].sum().reset_index()
 
 			def get_color(x,q1,q2,q3):
 			    if(x<=q1):
@@ -180,10 +183,10 @@ def analyze():
 			q3 = served['household_count'].describe()['75%']
 			served['opacity'] = served['household_count'].apply(get_color,q1=q1,q2=q2,q3=q3)
 
-			#q1 = unserved['household_count'].describe()['25%']
-			#q2 = unserved['household_count'].describe()['50%']
-			#q3 = unserved['household_count'].describe()['75%']
-			#unserved['opacity'] = unserved['household_count'].apply(get_color,q1=q1,q2=q2,q3=q3)
+			q1 = unserved['household_count'].describe()['25%']
+			q2 = unserved['household_count'].describe()['50%']
+			q3 = unserved['household_count'].describe()['75%']
+			unserved['opacity'] = unserved['household_count'].apply(get_color,q1=q1,q2=q2,q3=q3)
 
 			map_osm = folium.Map(location=[16, 106],zoom_start=5,prefer_canvas=True)
 
@@ -208,23 +211,26 @@ def analyze():
 
 			    folium.Circle(location=[lat,lon],radius=10,color=color_circle,fill_color=color_circle,opacity=opacity).add_to(map_osm)
 
-			#for each_val in unserved.values:
-			#    lon = each_val[0]
-			#    lat = each_val[1]
+			for each_val in unserved.values:
+			    lon = each_val[0]
+			    lat = each_val[1]
 			    
-			#    hh_count = each_val[3]
-			#    color_circle = 'red'
-			#    opacity = each_val[4]
+			    hh_count = each_val[3]
+			    color_circle = 'red'
+			    opacity = each_val[4]
 
-			#    folium.Circle(location=[lat,lon],radius=10,color=color_circle,fill_color=color_circle,opacity=opacity).add_to(map_osm)
+			    folium.Circle(location=[lat,lon],radius=10,color=color_circle,fill_color=color_circle,opacity=opacity).add_to(map_osm)
+			'''
 
-			map_osm.save('static/data/map_render.html')
+			file_map_save = 'static/data/optimization/'+model_name+'/maps/'+str(selected_dist)+'_'+str(selected_hosp_count)+'_map_render.html'
+			#map_osm.save(file_map_save)
+			file_map_save = '/'+file_map_save
 
 	return render_template('optimization.html',model_selected=model_name,km_options=km_options,hosp_options=hosp_options,folder_name=folder_name,
-		selected_dist=selected_dist,selected_hosp_count=selected_hosp_count)
+		selected_dist=selected_dist,selected_hosp_count=selected_hosp_count,file_map_save=file_map_save)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
 
 
  

@@ -254,7 +254,8 @@
         document.getElementById('myDIV2').style.visibility = 'visible';
         document.getElementById("radio_{{selected_dist}}").checked = true;
         document.getElementById("sel1").value = selected_hosp_count;
-        var folder_name_map = "/static/data/map_render.html";
+        
+        var folder_name_map = "{{file_map_save|safe}}"
         $("#map_view").load(folder_name_map); 
       }
 
