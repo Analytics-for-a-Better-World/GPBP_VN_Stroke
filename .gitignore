@@ -1,3 +1,4 @@
 
 .DS_Store
 *.pkl
+static/data/map_render.html
