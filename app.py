@@ -4,6 +4,7 @@ import geopy.distance
 import json
 import requests
 import folium
+import pickle
 
 app = Flask(__name__,static_url_path='/static')
 
