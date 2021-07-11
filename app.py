@@ -6,10 +6,6 @@ import requests
 import folium
 
 app = Flask(__name__,static_url_path='/static')
-app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy   dog'
-app.config['CORS_HEADERS'] = 'Content-Type'
-cors = CORS(app, resources={r"/foo": {"origins": "http://localhost:port"}})
-
 
 @app.route('/', methods=["GET", "POST"])
 def dashboard():
@@ -110,7 +106,6 @@ def isochrones():
 
 
 @app.route('/optimization', methods=["GET", "POST"])
-@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
 def analyze():
 	model_name = 9999
 	km_options = []
