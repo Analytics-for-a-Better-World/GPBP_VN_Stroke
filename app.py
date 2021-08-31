@@ -53,7 +53,7 @@ def dashboard():
 		duration_array = []
 		for each_val in df_euc_dist_sel.values:
 			coordinate_str = str(longitude)+','+str(latitude)+';'+str(each_val[10])+','+str(each_val[11])
-			request_mapbox_driving = """https://api.mapbox.com/directions-matrix/v1/mapbox/driving-traffic/"""+(coordinate_str)+"""?annotations=duration&access_token=pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2tybGFoMTZwMGJjdDJybnYyemwxY3QxMSJ9.FXaVYsMF3HIzw7ZQFQPhSw"""
+			request_mapbox_driving = """https://api.mapbox.com/directions-matrix/v1/mapbox/driving-traffic/"""+(coordinate_str)+"""?annotations=duration&access_token=pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2sweWVkOHcxMDBodDNpbm1ueXY2bzl1OCJ9.c93KNq0W0VtUq4FCD3XxJg"""
 			duration_minutes = json.loads(requests.get(request_mapbox_driving).content)['durations'][0][1]/(60*60)
 			duration_array.append(round(duration_minutes,1))
 		df_euc_dist_sel['distance_mapbox'] = duration_array
@@ -92,7 +92,7 @@ def dashboard():
 			        }
 			fac_details.append(each_fac_feature)
 
-	return render_template('dashboard.html',ACCESS_KEY='pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2tybGFoMTZwMGJjdDJybnYyemwxY3QxMSJ9.FXaVYsMF3HIzw7ZQFQPhSw',
+	return render_template('dashboard.html',ACCESS_KEY='pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2sweWVkOHcxMDBodDNpbm1ueXY2bzl1OCJ9.c93KNq0W0VtUq4FCD3XxJg',
 		stroke_facs=fac_details)
 
 @app.route('/isochrones', methods=["POST"])
