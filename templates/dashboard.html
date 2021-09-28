@@ -60,13 +60,14 @@
     <div id="map"></div>
     <div id="over_map">
       <form action="/" method="POST" name="form_input_location">
+        <h4 style="text-align: left; width: 50%; margin-top: 30px; color: white">Click on any point on the map to fill in the latitude and longitude automatically</h4>
         <div class="form-group">
-          <label for="latitude">Latitude</label>
-          <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
+          <label style="color:white" for="latitude">Latitude</label>
+          <input style="color:black" type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
         </div>
         <div class="form-group">
-          <label for="longitude">Longitude</label>
-          <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude">
+          <label style="color:white" for="longitude">Longitude</label>
+          <input style="color:black" type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude">
         </div>
         <input type="submit">
       </form>
@@ -94,6 +95,13 @@
                 <ul class="list-group">
                   <li class="list-group-item">Fullscreen mobile-friendly map template with responsive navbar and modal placeholders</li>
                 </ul>
+              </div>
+              <div class="panel panel-danger">
+                  <div class="panel-heading">Versions</div>
+                  <ul class="list-group">
+                    <li class="list-group-item"><strong>Version 1.1</strong> Updated on July 15,2021</li>
+                    <li class="list-group-item"><strong>Version 1.2</strong> Updated on Sep 26,2021</li>
+                  </ul>
               </div>
             </div>
             <div id="disclaimer" class="tab-pane fade text-danger">
@@ -124,7 +132,7 @@
                     </div>
                     <div class="col-md-12">
                       <p>
-                        <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Submit</button>
+                        <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">View Isochrones</button>
                       </p>
                     </div>
                   </div>
@@ -169,25 +177,7 @@
     });            
 
     mapPopupsJS.on('load', function () {
-
-      /* Raster Layer/Population
-      mapPopupsJS.addSource('wms-test-source', {
-        'type': 'raster',
-        'tiles': [
-        'https://img.nj.gov/imagerywms/Natural2015?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=Natural2015'
-        ],
-        'tileSize': 256
-      });
-      mapPopupsJS.addLayer(
-        {
-            'id': 'wms-test-layer',
-            'type': 'raster',
-            'source': 'wms-test-source',
-            'paint': {}
-        }
-      );
-      */
-
+      
       mapPopupsJS.addSource('stroke-facs', {
         // This GeoJSON contains features that include an "icon"
         // property. The value of the "icon" property corresponds
@@ -209,6 +199,22 @@
         }
       });
 
+      mapPopupsJS.addSource('boundary', {
+        'type': 'geojson',
+        'data': '../static/data/gadm_vietnam.geojson'
+      });
+
+      mapPopupsJS.addLayer({
+        'id': 'boundary',
+        'type': 'fill',
+        'source': 'boundary',
+        'layout': {},
+        'paint': {
+            'fill-color': '#38f',
+            'fill-opacity': 0.2
+        }
+      });
+
       mapPopupsJS.on('click', 'stroke-facs', function (e) {
         var coordinates = e.features[0].geometry.coordinates.slice();
         var description = e.features[0].properties.description;
@@ -225,6 +231,12 @@
       .setHTML(description)
       .addTo(mapPopupsJS);
     });
+
+      mapPopupsJS.on('click', function (e){
+        document.getElementById('longitude').value = e.lngLat.lng;
+        document.getElementById('latitude').value = e.lngLat.lat;
+    });
+
       // Change the cursor to a pointer when the mouse is over the places layer.
       mapPopupsJS.on('mouseenter', 'stroke-facs', function () {
         mapPopupsJS.getCanvas().style.cursor = 'pointer';

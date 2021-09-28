@@ -61,11 +61,12 @@ def dashboard():
 		less_than_6 = df_euc_dist_sel[df_euc_dist_sel['distance_mapbox']<=6]
 
 		for each_val in less_than_6.values:
+
 			each_fac_feature = {
 			        'type': 'Feature',
 			        'properties': {
 			        'description':
-			        '<strong>'+str(each_val[4])+'</strong><p><a href="'+str(each_val[13])+'" target="_blank">'+str(each_val[5])+'</a> is '+str(each_val[14])+' hours by driving in traffic'+'</p><form method="POST" action="/isochrones"><input hidden id="my_input" type="text" name="HTMLControlName" value="'+each_val[4]+'"><input type="submit" value="View Isochrones"></form>',
+			        '<strong>'+str(each_val[4])+'</strong><p><a href="'+str(each_val[13])+'" target="_blank">'+str(each_val[5])+'</a> is '+str(each_val[14])+' hours by driving in traffic'+'</p><form method="POST" action="/isochrones"><input hidden id="my_input" type="text" name="HTMLControlName" value="'+each_val[5]+'"><input type="submit" value="View Isochrones"></form>',
 			        'icon': 'hospital-15'
 			        },
 			        'geometry': {
@@ -82,7 +83,7 @@ def dashboard():
 			        'type': 'Feature',
 			        'properties': {
 			        'description':
-			        '<strong>'+str(each_val[3])+'</strong><p><a href="'+str(each_val[12])+'" target="_blank">'+str(each_val[4])+'</a> is a '+str(each_val[2])+' stroke facility'+'</p><form method="POST" action="/isochrones"><input hidden id="my_input" type="text" name="HTMLControlName" value="'+each_val[4]+'"><input type="submit" value="Submit"></form>',
+			        '<strong>'+str(each_val[3])+'</strong><p><a href="'+str(each_val[12])+'" target="_blank">'+str(each_val[4])+'</a> is a '+str(each_val[2])+' stroke facility'+'</p><form method="POST" action="/isochrones"><input hidden id="my_input" type="text" name="HTMLControlName" value="'+each_val[4]+'"><input type="submit" value="View Isochrones"></form>',
 			        'icon': 'hospital-15'
 			        },
 			        'geometry': {
@@ -98,12 +99,15 @@ def dashboard():
 @app.route('/isochrones', methods=["POST"])
 def isochrones():
 	if(request.method=='POST'):
+		mapbox_access_token = 'pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2tybGFoMTZwMGJjdDJybnYyemwxY3QxMSJ9.FXaVYsMF3HIzw7ZQFQPhSw'
 		sel_name = request.form.get('HTMLControlName')
 		df_stroke_facs = pd.read_csv('static/data/stroke-facs.csv')
 		sel_fac = df_stroke_facs[df_stroke_facs['Name_English']==sel_name][['longitude','latitude']].values
 		longitude = sel_fac[0][0]
 		latitude = sel_fac[0][1]
-		return render_template('isochrones.html',longitude=longitude,latitude=latitude) 
+		return render_template('isochrones.html',
+			longitude=longitude,latitude=latitude,
+			mapbox_access_token=mapbox_access_token) 
 
 
 @app.route('/optimization', methods=["GET", "POST"])
@@ -134,7 +138,7 @@ def analyze():
 		selected_dist=selected_dist,selected_hosp_count=selected_hosp_count,file_map_save=file_map_save)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
 
 
  
