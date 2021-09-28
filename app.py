@@ -123,7 +123,7 @@ def analyze():
 	if request.method=='POST':
 		model_name = request.form['model_sel']
 		folder_name = '/static/data/optimization/'+model_name+'/pareto.html'
-		km_options = [10,20,50]
+		km_options = [10,20]
 		hosp_options = [0,10,20,50]
 
 		if "radio_dist" in request.form:
