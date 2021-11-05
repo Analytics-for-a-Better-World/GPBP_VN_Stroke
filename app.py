@@ -10,7 +10,7 @@ app = Flask(__name__,static_url_path='/static')
 
 @app.route('/', methods=["GET", "POST"])
 def dashboard():
-	df_stroke_facs = pd.read_csv('static/data/stroke-facs.csv')
+	df_stroke_facs = pd.read_csv('static/data/stroke_facs_latest.csv')
 	df_stroke_facs = df_stroke_facs[['Contracted with VSS? (1=yes; 2=no)','Facility level (Trung ương=central; tỉnh=provincial; huyện=district)',
 						'Facility name-VN','Name_English','Facility type-VN','Type_name','Sectoral (1:health sector; 2:other sector;3:private sector)','address',
 						'longitude','latitude','phone','hyperlink']].reset_index()
@@ -101,7 +101,7 @@ def isochrones():
 	if(request.method=='POST'):
 		mapbox_access_token = 'pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2tybGFoMTZwMGJjdDJybnYyemwxY3QxMSJ9.FXaVYsMF3HIzw7ZQFQPhSw'
 		sel_name = request.form.get('HTMLControlName')
-		df_stroke_facs = pd.read_csv('static/data/stroke-facs.csv')
+		df_stroke_facs = pd.read_csv('static/data/stroke_facs_latest.csv')
 		sel_fac = df_stroke_facs[df_stroke_facs['Name_English']==sel_name][['longitude','latitude']].values
 		longitude = sel_fac[0][0]
 		latitude = sel_fac[0][1]
