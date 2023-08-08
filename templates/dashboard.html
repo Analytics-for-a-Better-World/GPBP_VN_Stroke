@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#000000">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>GPBP</title>
+  <title>Public Infrastructure Service Access</title>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -32,7 +32,7 @@
           <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
           <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
         </div>
-        <a class="navbar-brand" href="#">GPBP</a>
+        <a class="navbar-brand" href="#">PISA-Vietnam</a>
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
@@ -41,7 +41,7 @@
           <li class="dropdown">
             <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="/optimization"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Analyze and Optimize</a></li>
+              <li><a href="/explore"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Explore Data</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -60,14 +60,14 @@
     <div id="map"></div>
     <div id="over_map">
       <form action="/" method="POST" name="form_input_location">
-        <h4 style="text-align: left; width: 50%; margin-top: 30px; color: white">Click on any point on the map to fill in the latitude and longitude automatically</h4>
+        <h4 style="text-align: left; width: 50%; margin-top: 30px; color: white">Click on any point on the map to find the nearest 5 stroke care centers</h4>
         <div class="form-group">
           <label style="color:white" for="latitude">Latitude</label>
-          <input style="color:black" type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
+          <input style="color:black; width:250px;" type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
         </div>
         <div class="form-group">
           <label style="color:white" for="longitude">Longitude</label>
-          <input style="color:black" type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude">
+          <input style="color:black; width:250px;" type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude">
         </div>
         <input type="submit">
       </form>
@@ -79,7 +79,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Welcome to the Geospatial Planning and Budgeting Platform for Vietnam Stroke Facilities!</h4>
+          <h4 class="modal-title">Welcome to the GPBP-PISA Portal for Vietnam Stroke Facility Access</h4>
         </div>
         <div class="modal-body">
           <ul class="nav nav-tabs nav-justified" id="aboutTabs">
@@ -99,8 +99,7 @@
               <div class="panel panel-danger">
                   <div class="panel-heading">Versions</div>
                   <ul class="list-group">
-                    <li class="list-group-item"><strong>Version 1.1</strong> Updated on July 15,2021</li>
-                    <li class="list-group-item"><strong>Version 1.2</strong> Updated on Sep 26,2021</li>
+                    <li class="list-group-item"><strong>Version 1.0-beta</strong> Updated on August 8,2023</li>
                   </ul>
               </div>
             </div>
@@ -132,7 +131,7 @@
                     </div>
                     <div class="col-md-12">
                       <p>
-                        <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">View Isochrones</button>
+                        <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Click here to see the facility's cachment area</button>
                       </p>
                     </div>
                   </div>

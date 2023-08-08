@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#000000">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>GPBP Vietnam</title>
+  <title>GPBP-PISA Vietnam</title>
 
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -32,6 +32,12 @@
     });
   </script>
 
+  <style type="text/css">
+    body {
+      padding-top: 90px;  /* Adjust this value depending on the actual height of your navbar */
+  }
+  </style>
+
 </head>
 
 <body>
@@ -42,7 +48,7 @@
           <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
           <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
         </div>
-        <a class="navbar-brand" href="#">GPBP Vietnam</a>
+        <a class="navbar-brand" href="#">PISA-Vietnam</a>
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
@@ -50,7 +56,7 @@
           <li class="dropdown">
             <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Tools <b class="caret"></b></a>
             <ul class="dropdown-menu">
-              <li><a href="/optimization"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Analyze and Optimize</a></li>  
+              <li><a href="/explore"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;Explore Data</a></li>  
               <li class="divider hidden-xs"></li>
             </ul>
           </li>
@@ -66,136 +72,77 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="container mt-5">
+      <h4>This implementation of Public Infrastructure Service Access tool uses a data stack consisting of high-resolution gridded population estimates by WorldPop and Meta Data for Good Population, existing stroke care centers - a dataset curated by the World Bank team, and MapBox's travel time API to analyse current accessibility of population to stroke care within the golden hour of stroke which is 60-mins.</h4>
 
-    <div class="row">
-      <div class="col-md-9">
-        <h2>Available Data Models</h2>
-        <p>The following data models are currently supported by the platform - </p>            
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Travel Distance</th>
-              <th>Beneficiary Layer</th>
-              <th>Facility</th>
-              <th>Potential Locations for Optimiser</th>
-              <th>Click on the button to use the data model</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>OSM</td>
-              <td>WorldPop Unconstrained individual countries 2020 UN adjusted (Res 1 km)</td>
-              <td>Stroke Care Facilities (Team)</td>
-              <th>Health Facilities (OSM)</th>
-              <td>
-                <form action="/optimization" method="post">
-                  <div class="input submit">
-                    <input type="hidden" name="model_sel" value="Model_wp1_hh">
-                    <input type="submit" value="Select">
-                  </div>
-                </form>
-              </td>
-            </tr>
-            <tr>
-              <td>OSM</td>
-              <td>WorldPop Unconstrained individual countries 2020 UN adjusted (Res 1 km)</td>
-              <td>Stroke Care Facilities (Team)</td>
-              <th>Vietnam Grid of 10km * 10km</th>
-              <td>
-                <form id="target" action="/optimization" method="post">
-                  <div class="input submit">
-                    <input type="hidden" name="model_sel" value="Model_wp1_g10">
-                    <input type="submit" value="Select">
-                  </div>
-                </form>
-              </td>
-            </tr>
-            <tr>
-              <td>OSM</td>
-              <td>Facebook High Resolution Population Density Maps </td>
-              <td>Stroke Care Facilities (Team)</td>
-              <th>Health Facilities (OSM)</th>
-              <td>
-                <form id="target" action="/optimization" method="post">
-                  <div class="input submit">
-                    <input type="hidden" name="model_sel" value="Model_fb30_hh">
-                    <input type="submit" value="Select">
-                  </div>
-                </form>
-              </td>
-            </tr>
-            <tr>
-              <td>OSM</td>
-              <td>Facebook High Resolution Population Density Maps</td>
-              <td>Stroke Care Facilities (Team)</td>
-              <th>Vietnam Grid of 10km * 10km</th>
-              <td>
-                <form id="target" action="/optimization" method="post">
-                  <div class="input submit">
-                    <input type="hidden" name="model_sel" value="Model_fb30_g10">
-                    <input type="submit" value="Select">
-                  </div>
-                </form>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <form>
-          <div class="input submit">
-            <input type="submit" value="Add a New Model - Coming Soon!">
+      <h5>Below you can explore the different datasets used in this analysis</h5>
+
+      <!-- Tab navigation -->
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+              <a class="nav-link active" id="worldpop-tab" data-toggle="tab" href="#worldpop" role="tab" aria-controls="worldpop" aria-selected="true">WorldPop Population</a>
+          </li>
+          <li class="nav-item" role="presentation">
+              <a class="nav-link" id="facebook-tab" data-toggle="tab" href="#facebook" role="tab" aria-controls="facebook" aria-selected="false">Facebook Population</a>
+          </li>
+          <li class="nav-item" role="presentation">
+              <a class="nav-link" id="accessibility-tab" data-toggle="tab" href="#accessibility" role="tab" aria-controls="accessibility" aria-selected="false">Current Accessibility</a>
+          </li>
+      </ul>
+
+      <!-- Tab content -->
+      <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade active" id="worldpop" role="tabpanel" aria-labelledby="worldpop-tab">
+              <h4>WorldPop Population</h4>
+              <p>The spatial distribution of population in 2020 with country total adjusted to match the corresponding UNDP estimate. The dataset is available to download in Geotiff and ASCII XYZ format at a resolution of 30 arc (approximately 1 km at the equator).</p>
+              <h2>Vietnam (2020): 96.71 million</h2>
+              <iframe src="../static/data/worldpop.html" width="200%" height="600px" frameborder="0"></iframe>
           </div>
-        </form>
+          <div class="tab-pane fade" id="facebook" role="tabpanel" aria-labelledby="facebook-tab">
+              <h4>Meta Data for Good High-Resolution Population</h4>
+              <p>A high-resolution (100m) population density map of the world, created by Meta’s Data for Good Program using satellite imagery and ground surveys (2020)</p>
+              <h2>Vietnam (2020): 97.29 million</h2>
+              <iframe src="../static/data/metapop.html" width="200%" height="600px" frameborder="0"></iframe>
+          </div>
+         <div class="tab-pane fade" id="accessibility" role="tabpanel" aria-labelledby="accessibility-tab">
+              <h4>Current Accessibility Data</h4>
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th>Population</th>
+                          <th>Transport</th>
+                          <th>Facility Location</th>
+                          <th colspan="2">Percentage of population with access</th> <!-- This header spans two columns -->
+                      </tr>
+                      <tr>
+                          <th></th> <!-- Empty cell to adjust for the 3 single headers above -->
+                          <th></th>
+                          <th></th>
+                          <th>30 mins travel time</th>
+                          <th>60 mins travel time</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>WorldPop</td>
+                          <td>MapBox Isochrone API</td>
+                          <td>Stroke Care Facilities in Vietnam (World Bank)</td>
+                          <td>40</td>
+                          <td>68</td>
+                      </tr>
+                      <tr>
+                          <td>Facebook</td>
+                          <td>MapBox Isochrone API</td>
+                          <td>Stroke Care Facilities in Vietnam (World Bank)</td>
+                          <td>41</td>
+                          <td>70</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+
+
       </div>
-    </div>
-
-    <br><br>
-
-    <div class="row" id="myDIV" name="myDIV" style="visibility: hidden">
-      <div class="col-md-12">
-        <p>The optimization model for Vietnam starts out with a framework linking beneficiary locations, stroke facility locations, and road network.  The optimization model then seeks to understand where new facilities could be best placed to improve access. Universal access is defined as all populations having access to at least one facility within a certain travel distance (e.g., 10, 20, 50 km).  </p>
-        <p>The objective of this model is to maximize the number of inhabitants that can reach a facility within the preset maximum desired travel distance. The  model was implemented through python scripts based on refined analytics taken from Antonissen (2020).  For this phase of work, the team opted for the Gurobi Optimiser, which is one of the most powerful optimization solvers available.</p>
-        <div id="includeContent"></div>
-      </div>
-    </div>
-
-    <div class="row" style="visibility: hidden" id="myDIV1" name="myDIV1">
-      <h4>Choose the number of hospitals and distance to visualize the location of hospitals<br/><br/></h4>
-      <form id="target_map" action="/optimization" method="post">
-        <input type="hidden" id ="model_sel_form_map" name="model_sel">
-        <div class="col-md-4">
-          <label for="inlineRadio1">Choose the distance: </label>
-          {% for item in km_options %}
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="radio_dist" id="radio_{{item}}" value="{{item}}"> {{item}}
-          </div>
-          {% endfor %}
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="sel1">Choose the number of hospitals: </label>
-            <select class="form-control" id="sel1" name="sel1">
-            {% for item in hosp_options %}
-              <option value="{{item}}">{{item}}</option>
-            {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="col-md-4">
-           <input type="submit" value="Submit">
-        </div>
-      </form>
-    </div>
-
-    <div class="row" id="myDIV2" style="visibility: hidden">
-      <h4><br/><br/>The following map shows the health facilities for the options chosen above:</h4>
-      <div id="map_view" style="height:900px; width:1100px;"></div>
-    </div>
-
-    <div class="row" id="footer" style="visibility: hidden;">
-      <h3>References</h3>
-    </div>
-
   </div>
 
   <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
@@ -203,7 +150,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Welcome to the Geospatial Planning and Budgeting Platform!</h4>
+          <h4 class="modal-title">Welcome to the GPBP-Public Infrastructure Public Access Platform!</h4>
         </div>
         <div class="modal-body">
           <ul class="nav nav-tabs nav-justified" id="aboutTabs">

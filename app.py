@@ -3,8 +3,6 @@ import pandas as pd
 import geopy.distance
 import json
 import requests
-import folium
-import pickle
 
 app = Flask(__name__,static_url_path='/static')
 
@@ -53,7 +51,7 @@ def dashboard():
 		duration_array = []
 		for each_val in df_euc_dist_sel.values:
 			coordinate_str = str(longitude)+','+str(latitude)+';'+str(each_val[10])+','+str(each_val[11])
-			request_mapbox_driving = """https://api.mapbox.com/directions-matrix/v1/mapbox/driving-traffic/"""+(coordinate_str)+"""?annotations=duration&access_token=pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2tybGFoMTZwMGJjdDJybnYyemwxY3QxMSJ9.FXaVYsMF3HIzw7ZQFQPhSw"""
+			request_mapbox_driving = """https://api.mapbox.com/directions-matrix/v1/mapbox/driving-traffic/"""+(coordinate_str)+"""?annotations=duration&access_token=pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmthYnciLCJhIjoiY2xsMW9kdWM4MDY4NjNrcDY3cnVnNnc3cCJ9.3hW1-BUKzbSrQFN8Zbaj5g"""
 			duration_minutes = json.loads(requests.get(request_mapbox_driving).content)['durations'][0][1]/(60*60)
 			duration_array.append(round(duration_minutes,1))
 		df_euc_dist_sel['distance_mapbox'] = duration_array
@@ -93,13 +91,13 @@ def dashboard():
 			        }
 			fac_details.append(each_fac_feature)
 
-	return render_template('dashboard.html',ACCESS_KEY='pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2tybGFoMTZwMGJjdDJybnYyemwxY3QxMSJ9.FXaVYsMF3HIzw7ZQFQPhSw',
+	return render_template('dashboard.html',ACCESS_KEY='pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmthYnciLCJhIjoiY2xsMW9kdWM4MDY4NjNrcDY3cnVnNnc3cCJ9.3hW1-BUKzbSrQFN8Zbaj5g',
 		stroke_facs=fac_details)
 
 @app.route('/isochrones', methods=["POST"])
 def isochrones():
 	if(request.method=='POST'):
-		mapbox_access_token = 'pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmsiLCJhIjoiY2tybGFoMTZwMGJjdDJybnYyemwxY3QxMSJ9.FXaVYsMF3HIzw7ZQFQPhSw'
+		mapbox_access_token = 'pk.eyJ1IjoicGFydmF0aHlrcmlzaG5hbmthYnciLCJhIjoiY2xsMW9kdWM4MDY4NjNrcDY3cnVnNnc3cCJ9.3hW1-BUKzbSrQFN8Zbaj5g'
 		sel_name = request.form.get('HTMLControlName')
 		df_stroke_facs = pd.read_csv('static/data/stroke_facs_latest.csv')
 		sel_fac = df_stroke_facs[df_stroke_facs['Name_English']==sel_name][['longitude','latitude']].values
@@ -110,35 +108,12 @@ def isochrones():
 			mapbox_access_token=mapbox_access_token) 
 
 
-@app.route('/optimization', methods=["GET", "POST"])
-def analyze():
-	model_name = 9999
-	km_options = []
-	hosp_options = []
-	folder_name = 9999
-	selected_dist = 9999
-	selected_hosp_count = 9999
-	file_map_save = 9999
-	
-	if request.method=='POST':
-		model_name = request.form['model_sel']
-		folder_name = '/static/data/optimization/'+model_name+'/pareto.html'
-		km_options = [10,20]
-		hosp_options = [0,10,20,50]
-
-		if "radio_dist" in request.form:
-			selected_dist = request.form['radio_dist']
-			selected_hosp_count = request.form['sel1']
-
-			model_name = request.form['model_sel']
-			file_map_save = 'static/data/optimization/'+model_name+'/maps/'+str(selected_dist)+'_'+str(selected_hosp_count)+'_map_render.html'
-			file_map_save = '/'+file_map_save
-
-	return render_template('optimization.html',model_selected=model_name,km_options=km_options,hosp_options=hosp_options,folder_name=folder_name,
-		selected_dist=selected_dist,selected_hosp_count=selected_hosp_count,file_map_save=file_map_save)
+@app.route('/explore', methods=["GET", "POST"])
+def explore():
+	return render_template('explore.html')
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
 
 
  
